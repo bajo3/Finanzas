@@ -1,73 +1,12 @@
 ﻿
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
-public class Transaction
-{
-    public DateTime Date { get; set; }
-    public string Description { get; set; }
-    public decimal Amount { get; set; }
-    public string Type { get; set; }
-}
-
-public class FinanceManager
-{
-    private List<Transaction> transactions = new List<Transaction>();
-
-    public void AddTransaction(Transaction transaction)
-    {
-        transactions.Add(transaction);
-    }
-
-    public List<Transaction> GetTransactions()
-    {
-        return transactions;
-    }
-
-    public void AddIncome(DateTime date, string description, decimal amount)
-    {
-        AddTransaction(new Transaction
-        {
-            Date = date,
-            Description = description,
-            Amount = amount,
-            Type = "Ingreso"
-        });
-    }
-
-    public void AddExpense(DateTime date, string description, decimal amount)
-    {
-        AddTransaction(new Transaction
-        {
-            Date = date,
-            Description = description,
-            Amount = amount,
-            Type = "Gasto"
-        });
-    }
-
-    public decimal GetTotalIncome()
-    {
-        return transactions.Where(t => t.Type == "Ingreso").Sum(t => t.Amount);
-    }
-
-    public decimal GetTotalExpenses()
-    {
-        return transactions.Where(t => t.Type == "Gasto").Sum(t => t.Amount);
-    }
-
-    public decimal GetBalance()
-    {
-        return GetTotalIncome() - GetTotalExpenses();
-    }
-}
+using Finanzas.Entities;
+using Finanzas.Services;
 
 public class Program
 {
     public static void Main(string[] args)
     {
-        FinanceManager manager = new FinanceManager();
+        FinanceService manager = new();
         while (true)
         {
             Console.WriteLine("1. Registrar Ingreso");
@@ -93,7 +32,9 @@ public class Program
         }
     }
 
-    static void RegisterIncome(FinanceManager manager)
+    //este metodo Register income, tiene que estar dentro de la clase FinanceService por que es responsabilidad de esta esta tarea.
+    //lo mismo con las otras que requieren ese Service.
+    static void RegisterIncome(FinanceService manager)
     {
         Console.WriteLine("Fecha (yyyy-mm-dd):");
         var date = DateTime.Parse(Console.ReadLine());
@@ -102,10 +43,10 @@ public class Program
         Console.WriteLine("Monto:");
         var amount = decimal.Parse(Console.ReadLine());
 
-        manager.AddIncome(date, description, amount);
+        manager.AddTransaction(date, description, amount, TransactionTypes.Gasto);
     }
 
-    static void RegisterExpense(FinanceManager manager)
+    static void RegisterExpense(FinanceService manager)
     {
         Console.WriteLine("Fecha (yyyy-mm-dd):");
         var date = DateTime.Parse(Console.ReadLine());
@@ -114,10 +55,10 @@ public class Program
         Console.WriteLine("Monto:");
         var amount = decimal.Parse(Console.ReadLine());
 
-        manager.AddExpense(date, description, amount);
+        manager.AddTransaction(date, description, amount ,TransactionTypes.Ingreso);
     }
 
-    static void ShowReports(FinanceManager manager)
+    static void ShowReports(FinanceService manager)
     {
         Console.WriteLine("Total Ingresos: " + manager.GetTotalIncome());
         Console.WriteLine("Total Gastos: " + manager.GetTotalExpenses());
