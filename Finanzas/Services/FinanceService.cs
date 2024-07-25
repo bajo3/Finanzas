@@ -1,6 +1,4 @@
-﻿
-
-using Finanzas.Entities;
+﻿using Finanzas.Entities;
 using Finanzas.Infrastructure;
 
 namespace Finanzas.Services
@@ -13,10 +11,8 @@ namespace Finanzas.Services
             this.transactions.Add(transaction); // siempre se agrega "this." cuando se referencian objetos contenidos en la misma clase.
         }
 
-        public List<Transaction> GetTransactions()
-        {
-            return transactions;
-        }
+        public List<Transaction> GetTransactions() =>transactions;
+        
 
         // estos dos metodos hacen exactamente lo mismo cambiando el Type sugiero utilizar un Enum para mandar el tipo
         public void AddIncome(DateTime date, string description, decimal amount)
